@@ -127,7 +127,7 @@ open class Decoder {
             
             start_utt()
             
-            let hypothesis = fileHandle.reduceChunks(bufferSize, initial: nil, reducer: { [unowned self] (data: Data, partialHyp: Hypothesis?) -> Hypothesis? in
+            let hypothesis = fileHandle.reduceChunks(size: bufferSize, initial: nil, reducer: { [unowned self] (data: Data, partialHyp: Hypothesis?) -> Hypothesis? in
                 
                 self.process_raw(data)
                 
@@ -346,6 +346,5 @@ open class Decoder {
         engine.stop()
         engine.mainMixerNode.removeTap(onBus: 0)
         engine.reset()
-        engine = nil
     }
 }

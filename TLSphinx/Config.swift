@@ -11,8 +11,8 @@ import Sphinx.Base
 
 public class Config {
     
-    var cmdLnConf: COpaquePointer
-    private var cArgs: [UnsafeMutablePointer<Int8>]
+    var cmdLnConf: OpaquePointer
+    private var cArgs: [UnsafeMutablePointer<Int8>?]
     
     public init?(args: (String,String)...) {
         
@@ -22,7 +22,7 @@ public class Config {
             return [strdup(name),strdup(value)]
         }
         
-        cmdLnConf = cmd_ln_parse_r(nil, ps_args(), CInt(cArgs.count), &cArgs, STrue)
+        cmdLnConf = cmd_ln_parse_r(nil, ps_args(), CInt(cArgs.count), &cArgs[0], STrue)
         
         if cmdLnConf == nil {
             return nil
