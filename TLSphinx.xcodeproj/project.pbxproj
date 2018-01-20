@@ -16,6 +16,7 @@
 		9B5187E91B18F1A50000E78D /* Globals.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B5187E81B18F1A50000E78D /* Globals.swift */; };
 		9B5187EB1B19011B0000E78D /* LiveDecode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B5187EA1B19011B0000E78D /* LiveDecode.swift */; };
 		9B943A291B1CB30A00CD4F11 /* Hypotesis.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B943A281B1CB30A00CD4F11 /* Hypotesis.swift */; };
+		A02E34452013E47E00878E48 /* en-us in Resources */ = {isa = PBXBuildFile; fileRef = 9B5187E41B18EE280000E78D /* en-us */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -223,6 +224,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A02E34452013E47E00878E48 /* en-us in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
