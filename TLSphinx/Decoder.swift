@@ -50,6 +50,7 @@ open class Decoder {
     fileprivate var speechState: SpeechStateEnum
     fileprivate var lastUtteranceDetected: TimeInterval = 0
 
+    open var shouldIgnoreInput = false
     open var bufferSize: Int = 2048
     
     public init?(config: Config) {
@@ -294,7 +295,12 @@ open class Decoder {
         
         mixer.installTap(onBus: 0, bufferSize: 2048, format: formatIn, block: {
             [unowned self] (buffer: AVAudioPCMBuffer!, time: AVAudioTime!) in
-            
+
+            guard !self.shouldIgnoreInput else {
+                print("ignoring input")
+                return
+            }
+
             let capacity = UInt32(Double(buffer.frameCapacity)/ratio)
             
             let sphinxBuffer = AVAudioPCMBuffer(pcmFormat: formatOut, frameCapacity: capacity)
