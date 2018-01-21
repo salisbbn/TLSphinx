@@ -48,7 +48,8 @@ open class Decoder {
     fileprivate var psDecoder: OpaquePointer?
     fileprivate var engine: AVAudioEngine!
     fileprivate var speechState: SpeechStateEnum
-    
+    fileprivate var lastUtteranceDetected: TimeInterval = 0
+
     open var bufferSize: Int = 2048
     
     public init?(config: Config) {
@@ -170,10 +171,8 @@ open class Decoder {
     }
     
     open func startDecodingSpeech (_ utteranceComplete: @escaping (Hypothesis?) -> ()) {
-
         do {
-            try AVAudioSession.sharedInstance().setCategory(AVAudioSessionCategoryRecord)
-            //try AVAudioSession.sharedInstance().setPreferredSampleRate(16000)
+            try AVAudioSession.sharedInstance().setCategory(AVAudioSessionCategoryPlayAndRecord, with: .allowBluetoothA2DP)
         } catch let error as NSError {
             print("Error setting the shared AVAudioSession: \(error)")
             return
@@ -313,19 +312,29 @@ open class Decoder {
             bufferMapper.convert(to: sphinxBuffer, error: nil, withInputFrom: inputBlock)
             
             let audioData = sphinxBuffer.toNSDate()
+            let prevSpeechState = self.speechState
             self.process_raw(audioData)
-            
+
+            if prevSpeechState == .silence && self.speechState == .speech {
+                self.lastUtteranceDetected = Date.timeIntervalSinceReferenceDate
+            }
+
+            if self.speechState == .speech && Date().timeIntervalSince(Date(timeIntervalSinceReferenceDate: self.lastUtteranceDetected)) > 3 {
+                self.speechState = .utterance
+            }
+
             //print("Process: \(buffer.frameLength) frames - \(audioData.count) bytes - sample time: \(time.sampleTime)")
-            
+
             if self.speechState == .utterance {
-                
                 self.end_utt()
                 let hypothesis = self.get_hyp()
-                
+
                 DispatchQueue.main.async {
                     utteranceComplete(hypothesis)
                 }
-                
+
+                // Reset speech state to silence in prep of next batch of audio data.
+                self.speechState = .silence
                 self.start_utt()
             }
         })
